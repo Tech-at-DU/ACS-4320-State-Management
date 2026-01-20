@@ -28,7 +28,7 @@ Students by the end of the course will be able to:
 **Class Times:** Tuesday, Thursday 1:00 PM to 3:45 PM
 
 | Class |    Date     |   Lesson   |  Assignment | Assignment Due |
-|:-----:|:-----------:|:----------:|:-----------:|
+|:-----:|:-----------:|:----------:|:-----------:|:---:|
 |       | Week 1.     |  | [Assignment 1] |   |
 |  1    | Tue, Jan 20 |  |  |   |
 |  2    | Thr, Jan 22 |  |  |   |
