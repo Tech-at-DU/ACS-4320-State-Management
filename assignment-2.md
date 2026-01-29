@@ -11,9 +11,9 @@ Routing forces you to answer: Where does state live when components no longer sh
 **Goal**
 
 Refactor your Phase 1 application so it supports:
-	- a Task List page
-	- a Task Detail page
-	- a Task Create page
+  - a Task List page
+  - a Task Detail page
+  - a Task Create page
 
 Navigation must work without losing data or duplicating state.
 
