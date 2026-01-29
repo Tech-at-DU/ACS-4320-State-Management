@@ -20,11 +20,11 @@ Navigation must work without losing data or duplicating state.
 **Data Model (Unchanged)**
 
 Use the same task model from Phase 1:
-	- id — string
-	- title — string
-	- status — "todo" | "doing" | "done"
-	- createdAt — string
-	- updatedAt — string
+  - id — string
+  - title — string
+  - status — "todo" | "doing" | "done"
+  - createdAt — string
+  - updatedAt — string
 
 Do not add new fields in Phase 2.
 
