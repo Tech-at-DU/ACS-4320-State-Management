@@ -43,18 +43,20 @@ Students by the end of the course will be able to:
 |  8    | Thr, Feb 12 |  |  |   |
 |       | Week 5.     |  | [Assignment 3] |   |
 |  9    | Tue, Feb 17 |  |  | [Assignment 2] |
-| 10    | Thr, Feb 19 |  |  |   |
+| 10    | Thr, Feb 19 |  | [Assignment 4] | [Assignment 3] |
 |       | Week 6.     |  |  |   |
 | 11    | Tue, Feb 24 |  |  |   |
-| 12    | Thr, Feb 26 |  |  |   |
-|       | Week 7.     |  |  | [Assignment 3] |
+| 12    | Thr, Feb 26 |  | [Assignment 5] | [Assignment 4] |
+|       | Week 7.     |  |  |  |
 | 13    | Tue, Mar  3 |  |  |   |
-| 14    | Thr, Mar  5 |  |  |   |
+| 14    | Thr, Mar  5 |  |  | [Assignment 5] |
 
 
 [Assignment 1]: ./assignment-1.md
 [Assignment 2]: ./assignment-2.md
 [Assignment 3]: ./assignment-3.md
+[Assignment 4]: ./assignment-4.md
+[Assignment 5]: ./assignment-5.md
 
 ## Evaluation
 
