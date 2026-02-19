@@ -1,6 +1,6 @@
 ---
 
-ACS 4320 — State Management for JavaScript Apps  
+# ACS 4320 — State Management for JavaScript Apps  
 Weeks 10–11
 
 ---
