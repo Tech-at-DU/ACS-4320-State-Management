@@ -1,419 +1,126 @@
-# Session 1 — Architecture & Refactor Lab
-## From Student App to Professional App
 
-**Duration:** 2h 45m  
-**Goal:** Refactor an existing screen to improve structure, separation of concerns, and clarity.
 
----
+# ACS 4320 - State Management
 
-## 🎯 Learning Goals
+## Course Description
 
-By the end of this session, you will:
+This course explores how modern applications manage state as complexity grows. Students will study the patterns and tools used to coordinate application data, user interactions, and UI updates.
 
-- Separate logic from presentation
-- Extract reusable UI components
-- Create a custom hook
-- Remove side-effects from render
-- Clean up file structure
-- Reduce duplication
-- Make your code easier to reason about
+The course focuses on state management in JavaScript applications built with React. Students will learn how local component state evolves into shared application state and how to organize that state using modern patterns and tools such as reducers and centralized stores.
 
----
+Throughout the course students will build progressively more complex applications while refactoring earlier designs to improve clarity, maintainability, and scalability.
 
-## Quick Intro — React Hooks
+### Why you should know this
 
-Hooks are functions that let your components “hook into” React features like **state**, **side effects**, and **context**. They exist to help you reuse logic and keep components readable.
+Managing state is one of the hardest problems in modern software development.
 
-You’ll use hooks for:
+Small applications can often rely on simple local state, but as applications grow, state quickly becomes difficult to reason about. Data must be shared between components, synchronized with the UI, and updated predictably when users interact with the application.
 
-- **State** (`useState`) — values that change over time
-- **Side effects** (`useEffect`) — fetch data, save data, subscribe/unsubscribe
-- **Memoization** (`useMemo`, `useCallback`) — avoid expensive rework on re-render
-- **Context** (`useContext`) — app-wide values like theme, auth, locale
-- **Redux hooks** (`useSelector`, `useDispatch`) — read/store global state
+Without clear patterns for managing state, applications become fragile, hard to maintain, and difficult to extend.
 
-### Rules of Hooks
+Understanding state management allows you to:
 
-1. **Only call hooks at the top level**  
-   Don’t call hooks inside loops, conditions, or nested functions.
+- build scalable front-end architectures
+- reason about complex UI behavior
+- organize application data in predictable ways
+- collaborate effectively on large codebases
 
-2. **Only call hooks from React functions**  
-   Hooks must run inside a React function component or a custom hook.
-
-3. **Name custom hooks with `use`**  
-   Examples: `useAnimals`, `useTheme`, `useFavorites`.
-
-### Best Practices
-
-- **Use hooks to separate responsibilities**
-  - Screens should compose UI.
-  - Hooks should own logic (fetching, toggling, derived state).
-  - Components should focus on rendering.
-
-- **Keep effects narrow**
-  - One effect = one responsibility (fetch OR persist OR subscribe).
-  - Don’t combine unrelated side effects in the same `useEffect`.
-
-- **Dependencies matter**
-  - If you reference a variable in an effect, it usually belongs in the dependency array.
-  - Prefer stable values and functions when possible.
-
-- **Don’t store derived state**
-  - If you can compute something from existing state/props, compute it instead of saving it.
-
-- **Memoize intentionally**
-  - `useMemo` / `useCallback` are for preventing real performance problems, not for “because it’s best practice.”
-  - Start with readability. Optimize once you see a hotspot.
-
-- **Custom hook test**
-  - If a component has a big chunk of logic that could be reused or makes the JSX hard to read, extract it into a custom hook.
+State management is a core skill for professional front-end developers.
 
 ---
 
-## Part 1 — What’s Wrong With This? (25 min)
+## Prerequisites
 
-Consider this realistic but messy screen:
-
-```js
-export default function AnimalListScreen() {
-  const dispatch = useDispatch();
-  const { animals, favorites } = useSelector(...);
-  const theme = useContext(ThemeContext);
-
-  const styles = createStyles(theme);
-
-  useEffect(() => {
-    dispatch(fetchAnimals());
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
-
-  const toggleFavorite = (url) => {
-    ...
-  };
-
-  return (
-    <FlatList
-      data={animals}
-      renderItem={({ item }) => (
-        <View style={{ padding: 16, backgroundColor: theme.colors.card }}>
-          ...
-        </View>
-      )}
-    />
-  );
-}
-```
-
-### Discussion Prompts
-
-- What responsibilities does this screen have?
-- What does it *know* about?
-- What could be reused?
-- What makes it hard to test?
-- What makes it hard to change?
-
-Write down your answers.
-
-You should notice this screen is responsible for:
-
-- Data fetching
-- Persistence
-- Rendering
-- Styling
-- Business logic
-- Async side effects
-- Redux wiring
-
-That’s too much.
+- [ACS 3330](https://github.com/Tech-at-DU/ACS-3330-Single-Page-Applications)
 
 ---
 
-## Part 2 — Architecture Pattern (20 min)
+## Learning Outcomes
 
-We will use this structure:
+By the end of the course, you will be able to:
 
-```
-/screens
-  AnimalListScreen.js
-
-/components
-  AnimalCard.js
-  FavoriteButton.js
-
-/hooks
-  useAnimals.js
-```
-
-### Responsibilities
-
-| Layer     | Responsibility       |
-|----------|-----------------------|
-| Screen   | Layout + composition  |
-| Hook     | State + logic         |
-| Component| Pure UI               |
+1. Identify different types of state within a web application
+2. Manage component state using React hooks
+3. Refactor local state into shared application state
+4. Implement predictable state updates using reducer patterns
+5. Use centralized state management libraries
+6. Design maintainable state architectures for medium-sized applications
+7. Debug state-related bugs and reason about UI state flow
 
 ---
 
-## Part 3 — Guided Refactor (30 min)
+## Schedule
 
-### Step 1 — Extract a Custom Hook
+**Course Dates:** _(update to match semester)_
 
-#### What Is a Custom Hook?
+**Class Times:** Monday, Wednesday 1:00 PM – 3:45 PM Virtual online.
 
-A custom hook is a function that:
-
-- Starts with `use`
-- Calls other React hooks (like `useState`, `useEffect`, `useContext`, `useSelector`)
-- Encapsulates reusable logic so components stay focused on UI
-
-Custom hooks exist to **separate logic from presentation**.
-
-- The **screen** should answer: *“What does this look like?”*
-- The **hook** should answer: *“How does this work?”*
-
-#### Why This Matters
-
-As apps grow, screens often accumulate:
-
-- Data fetching
-- Derived state
-- Business logic
-- Redux wiring
-- Async side effects
-
-When that logic lives directly inside a component, it becomes harder to:
-- Read
-- Test
-- Reuse
-- Refactor
-
-Extracting a custom hook keeps your screen lean and focused.
-
-#### When Should You Extract One?
-
-Extract a custom hook when:
-
-- The top of your component feels crowded before the `return`
-- You have multiple `useEffect` calls doing different things
-- Logic could be reused in another screen
-- You want to isolate and test behavior separately
-
-A simple rule of thumb:
-
-> If your component feels “busy” above the JSX, it probably wants a custom hook.
-
-Create `/hooks/useAnimals.js`:
-
-```js
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAnimals, addFavorite, removeFavorite } from '../features/animals/animalsSlice';
-
-export function useAnimals() {
-  const dispatch = useDispatch();
-  const { animals, favorites, status, error } = useSelector(
-    (state) => state.animals
-  );
-
-  useEffect(() => {
-    dispatch(fetchAnimals());
-  }, [dispatch]);
-
-  const toggleFavorite = (url) => {
-    const isFav = favorites.includes(url);
-    dispatch(isFav ? removeFavorite(url) : addFavorite(url));
-  };
-
-  const refresh = () => dispatch(fetchAnimals());
-
-  return {
-    animals,
-    favorites,
-    status,
-    error,
-    toggleFavorite,
-    refresh,
-  };
-}
-```
+| Class | Date | Topics | Assignment |
+|:------|:-----|:-------|:-----------|
+|  -    | **Week 1** | - | - |
+| 1 | Mon, Mar 23| What is State? | |
+| 2 | Wed, Mar 25 | Local Component State | [Assignment 1 – Local State Task App] |
+|  -    | **Week 2** | - | - |
+| 3 | Mon, Mar 30 | Derived State | |
+| 4 | Wed, Apr  1 | State and Component Architecture | |
+|  -    | **Week 3** | - | - |
+| 5 | Mon, Apr  6 | Lifting State | |
+| 6 | Wed, Apr  8 | Prop Drilling and Data Flow | [Assignment 2 – Refactor State Architecture] |
+|  -    | **Week 4** | - | - |
+| 7 | Mon, Apr 13 | Reducer Pattern | |
+| 8 | Wed, Apr 15 | useReducer | |
+|  -    | **Week 5** | - | - |
+| 9 | Mon, Apr 20 | Global State Concepts | |
+|10 | Wed, Apr 22 | Context API | [Assignment 3 – Shared State App] |
+|  -    | **Week 6** | - | - |
+|11 | Mon, Apr 27 | Redux and State Stores | |
+|12 | Wed, Apr 29 | Redux Toolkit | |
+|  -    | **Week 7** | - | - |
+|13 | Mon, May  4 | State Architecture Patterns | |
+|14 | Wed, May  6 | Debugging and Refactoring State | |
+|  -    | **Week 8** | - | - |
+|15 | Mon, May 11 | Final Project Work | |
+|16 | Mon, May 13 | Final Presentations | Final Project |
 
 ---
 
-### Step 2 — Extract a Presentational Component
+## Homework
 
-Create `/components/AnimalCard.js`:
+During the course you will build and refactor several applications focused on managing state complexity.
 
-```js
-import { View, Text, Image, Pressable } from 'react-native';
+1. **Assignment 1 – Local State Application**  
+   Build a React application using only local component state.
 
-export default function AnimalCard({
-  imageUrl,
-  isFavorite,
-  onToggle,
-  styles,
-}) {
-  return (
-    <View style={styles.card}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
-      <View style={styles.row}>
-        <Text style={styles.label}>
-          {isFavorite ? '★ Favorite' : '☆ Not favorite'}
-        </Text>
-        <Pressable style={styles.button} onPress={() => onToggle(imageUrl)}>
-          <Text style={styles.buttonText}>
-            {isFavorite ? 'Remove' : 'Favorite'}
-          </Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-```
+2. **Assignment 2 – Refactoring State Architecture**  
+   Refactor your application to reduce duplication and improve data flow.
 
-Important:
+3. **Assignment 3 – Shared State Application**  
+   Implement shared state using Context or reducer patterns.
 
-- No Redux
-- No AsyncStorage
-- No network calls
-- Pure UI only
+4. **Final Project – Application State Architecture**  
+   Design and implement a medium-sized application demonstrating clear state organization.
+
+Assignments should be submitted through GradeScope.
+
+Each assignment builds on previous work and introduces new architectural challenges.
 
 ---
 
-### Step 3 — Simplify the Screen
+## Evaluation
 
-```js
-import * as React from 'react';
-import { View, FlatList } from 'react-native';
-import AnimalCard from '../components/AnimalCard';
-import { ThemeContext } from '../ThemeContext';
-import { createStyles } from '../styles/createStyles';
-import { useAnimals } from '../hooks/useAnimals';
+To pass this course you must meet the following requirements:
 
-export default function AnimalListScreen() {
-  const theme = React.useContext(ThemeContext);
-  const styles = React.useMemo(() => createStyles(theme), [theme]);
-  const { animals, favorites, status, refresh, toggleFavorite } = useAnimals();
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={animals}
-        keyExtractor={(item) => item}
-        contentContainerStyle={styles.listContent}
-        refreshing={status === 'loading'}
-        onRefresh={refresh}
-        renderItem={({ item }) => (
-          <AnimalCard
-            imageUrl={item}
-            isFavorite={favorites.includes(item)}
-            onToggle={toggleFavorite}
-            styles={styles}
-          />
-        )}
-      />
-    </View>
-  );
-}
-```
-
-Now the screen:
-
-- Orchestrates
-- Composes
-- Stays readable
+- Score an average of **at least 2 on the rubric** overall for each assignment
+- Pass the **final summative assessment** according to the rubric
+- Actively participate in class and follow the attendance policy
+- Make up all classwork from absences
 
 ---
 
-## Part 4 — Refactor Lab (50 min)
+## Course Philosophy
 
-Now you will refactor one screen from your own project.
+This course emphasizes **iteration and refactoring**.
 
-### Requirements
+Your early solutions will often feel awkward or messy. This is intentional. As the course progresses you will revisit earlier designs and improve them using new patterns and tools.
 
-You must:
-
-1. Extract at least one custom hook
-2. Extract at least one presentational component
-3. Remove inline styles from JSX
-4. Reduce duplicated logic
-5. Make your screen easier to read (less “busy” above `return`)
-
-Create these folders if you don’t have them:
-
-```
-/hooks
-/components
-```
-
----
-
-## Partner Review (20 min)
-
-Pair up and review each other’s refactor.
-
-You must explain:
-
-- What logic you extracted
-- Why it belongs in a hook
-- What the screen is responsible for now
-- What architectural smells remain
-
-If you can’t explain it clearly, rethink your structure.
-
----
-
-## Architectural Smells Checklist (15 min)
-
-Does your screen:
-
-- Exceed 250 lines?
-- Mix `useEffect` and rendering logic heavily?
-- Include lots of derived values computed inline inside JSX?
-- Create big inline style objects in `style={...}`?
-- Duplicate selectors or utility logic across files?
-- Have multiple unrelated responsibilities?
-- Have conditionals scattered everywhere in JSX?
-
-If yes — refactor more.
-
----
-
-## Deliverable (Due Next Class)
-
-Submit:
-
-- Refactored screen
-- Extracted custom hook
-- Extracted presentational component
-- A short paragraph explaining what changed and why
-
----
-
-## Grading Criteria
-
-| Category                              | Points |
-|--------------------------------------|--------|
-| Hook extracted correctly             | 30     |
-| Presentational component extracted   | 30     |
-| Clear separation of concerns         | 20     |
-| Reduced duplication                  | 10     |
-| Code readability improved            | 10     |
-
----
-
-## Why This Matters
-
-This session moves you from:
-
-> “Making it work”
-
-to
-
-> “Building it professionally.”
-
-Architecture determines how easily your app grows, changes, and scales.
-
-You are no longer writing demos — you are building real software.
+Learning to recognize when a state architecture is failing — and how to improve it — is a central goal of the course.
