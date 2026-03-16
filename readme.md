@@ -1,80 +1,419 @@
-# ACS 4320 State Management for JavaScript Apps
+# Session 1 — Architecture & Refactor Lab
+## From Student App to Professional App
 
-## Course Description
+**Duration:** 2h 45m  
+**Goal:** Refactor an existing screen to improve structure, separation of concerns, and clarity.
 
-State Management for JavaScript Apps focuses on designing, implementing, and reasoning about application state in modern frontend systems. Students study how state evolves from simple local UI concerns to shared, global, server-synchronized, and persistent forms as applications grow in complexity. Through a sequence of refactors and progressively constrained projects, the course emphasizes state ownership, data flow, async correctness, and explicit modeling of application behavior. Students learn to evaluate tradeoffs between state management strategies and justify architectural decisions rather than relying on frameworks or patterns by default.
+---
 
-### Why you should know this
+## 🎯 Learning Goals
 
-Most bugs in modern JavaScript applications are not caused by syntax errors or missing features—they come from poorly designed state. As applications grow, ad-hoc use of local state, props, and global stores leads to duplicated data, impossible UI states, stale views, and unpredictable behavior that is difficult to debug or test. Understanding state management teaches you how to design systems that remain correct as complexity increases, where data has a clear owner, changes are intentional, and user interactions are predictable. These skills transfer across frameworks and libraries and are essential for building front-end applications that scale beyond small demos into maintainable, production-level software.
+By the end of this session, you will:
 
-## Prerequisites:  
+- Separate logic from presentation
+- Extract reusable UI components
+- Create a custom hook
+- Remove side-effects from render
+- Clean up file structure
+- Reduce duplication
+- Make your code easier to reason about
 
-- [ACS 3330](https://github.com/Tech-at-DU/ACS-3330-Single-Page-Web-Applications)
+---
 
-## Learning Outcomes
+## Quick Intro — React Hooks
 
-Students by the end of the course will be able to:
-	1. Analyze JavaScript applications to identify state management problems, including duplicated state, unclear ownership, and invalid UI states.
-	2. Design state architectures that clearly define ownership, data flow, and state lifetimes across local, shared, global, server, and persistent state.
-	3. Implement predictable state transitions and asynchronous data flows using reducers, selectors, and explicit modeling techniques.
-	4. Refactor existing applications to improve state clarity, correctness, and maintainability without changing user-visible behavior.
-	5. Evaluate and justify tradeoffs between state management strategies and tools through written and visual technical documentation.
+Hooks are functions that let your components “hook into” React features like **state**, **side effects**, and **context**. They exist to help you reuse logic and keep components readable.
 
-## Schedule
+You’ll use hooks for:
 
-**Course Dates:** January 20, 2026 to March 6, 2026
+- **State** (`useState`) — values that change over time
+- **Side effects** (`useEffect`) — fetch data, save data, subscribe/unsubscribe
+- **Memoization** (`useMemo`, `useCallback`) — avoid expensive rework on re-render
+- **Context** (`useContext`) — app-wide values like theme, auth, locale
+- **Redux hooks** (`useSelector`, `useDispatch`) — read/store global state
 
-**Class Times:** Tuesday, Thursday 1:00 PM to 3:45 PM
+### Rules of Hooks
 
-| Class |    Date     |   Lesson   |  Assignment | Assignment Due |
-|:-----:|:-----------:|:----------:|:-----------:|:---:|
-|       | Week 1.     |  | [Assignment 1] |   |
-|  1    | Tue, Jan 20 |  |  |   |
-|  2    | Thr, Jan 22 |  |  |   |
-|       | Week 2.     |  |  |   |
-|  3    | Tue, Jan 27 |  |  |   |
-|  4    | Thr, Jan 29 |  |  |   |
-|       | Week 3.     |  |  | [Assignment 1] |
-|  5    | Tue, Feb  3 |  | [Assignment 2] |   |
-|  6    | Thr, Feb  5 |  |  |   |
-|       | Week 4.     |  |  |   |
-|  7    | Tue, Feb 10 |  |  |   |
-|  8    | Thr, Feb 12 |  |  |   |
-|       | Week 5.     |  | [Assignment 3] |   |
-|  9    | Tue, Feb 17 |  |  | [Assignment 2] |
-| 10    | Thr, Feb 19 |  | [Assignment 4] | [Assignment 3] |
-|       | Week 6.     |  |  |   |
-| 11    | Tue, Feb 24 |  |  |   |
-| 12    | Thr, Feb 26 |  | [Assignment 5] | [Assignment 4] |
-|       | Week 7.     |  |  |  |
-| 13    | Tue, Mar  3 |  |  |   |
-| 14    | Thr, Mar  5 |  |  | [Assignment 5] |
+1. **Only call hooks at the top level**  
+   Don’t call hooks inside loops, conditions, or nested functions.
 
+2. **Only call hooks from React functions**  
+   Hooks must run inside a React function component or a custom hook.
 
-[Assignment 1]: ./assignment-1.md
-[Assignment 2]: ./assignment-2.md
-[Assignment 3]: ./assignment-3.md
-[Assignment 4]: ./assignment-4.md
-[Assignment 5]: ./assignment-5.md
+3. **Name custom hooks with `use`**  
+   Examples: `useAnimals`, `useTheme`, `useFavorites`.
 
-## Evaluation
+### Best Practices
 
-To pass this course you must meet the following requirements:
+- **Use hooks to separate responsibilities**
+  - Screens should compose UI.
+  - Hooks should own logic (fetching, toggling, derived state).
+  - Components should focus on rendering.
 
-- Achieve a passing score according to the rubric on each of the [projects](#projects) listed above.
+- **Keep effects narrow**
+  - One effect = one responsibility (fetch OR persist OR subscribe).
+  - Don’t combine unrelated side effects in the same `useEffect`.
 
-##  Information Resources
+- **Dependencies matter**
+  - If you reference a variable in an effect, it usually belongs in the dependency array.
+  - Prefer stable values and functions when possible.
 
+- **Don’t store derived state**
+  - If you can compute something from existing state/props, compute it instead of saving it.
 
+- **Memoize intentionally**
+  - `useMemo` / `useCallback` are for preventing real performance problems, not for “because it’s best practice.”
+  - Start with readability. Optimize once you see a hotspot.
 
-## Make School Course Policies
+- **Custom hook test**
+  - If a component has a big chunk of logic that could be reused or makes the JSX hard to read, extract it into a custom hook.
 
-- [Program Learning Outcomes](https://make.sc/program-learning-outcomes) - What you will achieve after finishing Make School, all courses are designed around these outcomes.
-- [Grading System](https://make.sc/grading-system) - How grading is done at Make School
-- [Diversity and Inclusion Statement](https://make.sc/diversity-and-inclusion-statement) - Learn about Diversity and Inclusion at Make School
-- [Academic Honesty](https://make.sc/academic-honesty-policy) - Our policies around plagerism, cheating, and other forms of academic misconduct 
-- [Attendance Policy](https://make.sc/attendance-policy) - What we expect from you in terms of attendance for all classes at Make School
-- [Course Credit Policy](https://make.sc/course-credit-policy) - Our policy for how you obtain credit for your courses
-- [Disability Services (Academic Accommodations)](https://make.sc/disability-services) - Services and accommodations we provide for students
-- [Student Handbook](https://make.sc/student-handbook) - Guidelines, policies, and resources for all Make School students
+---
+
+## Part 1 — What’s Wrong With This? (25 min)
+
+Consider this realistic but messy screen:
+
+```js
+export default function AnimalListScreen() {
+  const dispatch = useDispatch();
+  const { animals, favorites } = useSelector(...);
+  const theme = useContext(ThemeContext);
+
+  const styles = createStyles(theme);
+
+  useEffect(() => {
+    dispatch(fetchAnimals());
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (url) => {
+    ...
+  };
+
+  return (
+    <FlatList
+      data={animals}
+      renderItem={({ item }) => (
+        <View style={{ padding: 16, backgroundColor: theme.colors.card }}>
+          ...
+        </View>
+      )}
+    />
+  );
+}
+```
+
+### Discussion Prompts
+
+- What responsibilities does this screen have?
+- What does it *know* about?
+- What could be reused?
+- What makes it hard to test?
+- What makes it hard to change?
+
+Write down your answers.
+
+You should notice this screen is responsible for:
+
+- Data fetching
+- Persistence
+- Rendering
+- Styling
+- Business logic
+- Async side effects
+- Redux wiring
+
+That’s too much.
+
+---
+
+## Part 2 — Architecture Pattern (20 min)
+
+We will use this structure:
+
+```
+/screens
+  AnimalListScreen.js
+
+/components
+  AnimalCard.js
+  FavoriteButton.js
+
+/hooks
+  useAnimals.js
+```
+
+### Responsibilities
+
+| Layer     | Responsibility       |
+|----------|-----------------------|
+| Screen   | Layout + composition  |
+| Hook     | State + logic         |
+| Component| Pure UI               |
+
+---
+
+## Part 3 — Guided Refactor (30 min)
+
+### Step 1 — Extract a Custom Hook
+
+#### What Is a Custom Hook?
+
+A custom hook is a function that:
+
+- Starts with `use`
+- Calls other React hooks (like `useState`, `useEffect`, `useContext`, `useSelector`)
+- Encapsulates reusable logic so components stay focused on UI
+
+Custom hooks exist to **separate logic from presentation**.
+
+- The **screen** should answer: *“What does this look like?”*
+- The **hook** should answer: *“How does this work?”*
+
+#### Why This Matters
+
+As apps grow, screens often accumulate:
+
+- Data fetching
+- Derived state
+- Business logic
+- Redux wiring
+- Async side effects
+
+When that logic lives directly inside a component, it becomes harder to:
+- Read
+- Test
+- Reuse
+- Refactor
+
+Extracting a custom hook keeps your screen lean and focused.
+
+#### When Should You Extract One?
+
+Extract a custom hook when:
+
+- The top of your component feels crowded before the `return`
+- You have multiple `useEffect` calls doing different things
+- Logic could be reused in another screen
+- You want to isolate and test behavior separately
+
+A simple rule of thumb:
+
+> If your component feels “busy” above the JSX, it probably wants a custom hook.
+
+Create `/hooks/useAnimals.js`:
+
+```js
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAnimals, addFavorite, removeFavorite } from '../features/animals/animalsSlice';
+
+export function useAnimals() {
+  const dispatch = useDispatch();
+  const { animals, favorites, status, error } = useSelector(
+    (state) => state.animals
+  );
+
+  useEffect(() => {
+    dispatch(fetchAnimals());
+  }, [dispatch]);
+
+  const toggleFavorite = (url) => {
+    const isFav = favorites.includes(url);
+    dispatch(isFav ? removeFavorite(url) : addFavorite(url));
+  };
+
+  const refresh = () => dispatch(fetchAnimals());
+
+  return {
+    animals,
+    favorites,
+    status,
+    error,
+    toggleFavorite,
+    refresh,
+  };
+}
+```
+
+---
+
+### Step 2 — Extract a Presentational Component
+
+Create `/components/AnimalCard.js`:
+
+```js
+import { View, Text, Image, Pressable } from 'react-native';
+
+export default function AnimalCard({
+  imageUrl,
+  isFavorite,
+  onToggle,
+  styles,
+}) {
+  return (
+    <View style={styles.card}>
+      <Image source={{ uri: imageUrl }} style={styles.image} />
+      <View style={styles.row}>
+        <Text style={styles.label}>
+          {isFavorite ? '★ Favorite' : '☆ Not favorite'}
+        </Text>
+        <Pressable style={styles.button} onPress={() => onToggle(imageUrl)}>
+          <Text style={styles.buttonText}>
+            {isFavorite ? 'Remove' : 'Favorite'}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+```
+
+Important:
+
+- No Redux
+- No AsyncStorage
+- No network calls
+- Pure UI only
+
+---
+
+### Step 3 — Simplify the Screen
+
+```js
+import * as React from 'react';
+import { View, FlatList } from 'react-native';
+import AnimalCard from '../components/AnimalCard';
+import { ThemeContext } from '../ThemeContext';
+import { createStyles } from '../styles/createStyles';
+import { useAnimals } from '../hooks/useAnimals';
+
+export default function AnimalListScreen() {
+  const theme = React.useContext(ThemeContext);
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
+  const { animals, favorites, status, refresh, toggleFavorite } = useAnimals();
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={animals}
+        keyExtractor={(item) => item}
+        contentContainerStyle={styles.listContent}
+        refreshing={status === 'loading'}
+        onRefresh={refresh}
+        renderItem={({ item }) => (
+          <AnimalCard
+            imageUrl={item}
+            isFavorite={favorites.includes(item)}
+            onToggle={toggleFavorite}
+            styles={styles}
+          />
+        )}
+      />
+    </View>
+  );
+}
+```
+
+Now the screen:
+
+- Orchestrates
+- Composes
+- Stays readable
+
+---
+
+## Part 4 — Refactor Lab (50 min)
+
+Now you will refactor one screen from your own project.
+
+### Requirements
+
+You must:
+
+1. Extract at least one custom hook
+2. Extract at least one presentational component
+3. Remove inline styles from JSX
+4. Reduce duplicated logic
+5. Make your screen easier to read (less “busy” above `return`)
+
+Create these folders if you don’t have them:
+
+```
+/hooks
+/components
+```
+
+---
+
+## Partner Review (20 min)
+
+Pair up and review each other’s refactor.
+
+You must explain:
+
+- What logic you extracted
+- Why it belongs in a hook
+- What the screen is responsible for now
+- What architectural smells remain
+
+If you can’t explain it clearly, rethink your structure.
+
+---
+
+## Architectural Smells Checklist (15 min)
+
+Does your screen:
+
+- Exceed 250 lines?
+- Mix `useEffect` and rendering logic heavily?
+- Include lots of derived values computed inline inside JSX?
+- Create big inline style objects in `style={...}`?
+- Duplicate selectors or utility logic across files?
+- Have multiple unrelated responsibilities?
+- Have conditionals scattered everywhere in JSX?
+
+If yes — refactor more.
+
+---
+
+## Deliverable (Due Next Class)
+
+Submit:
+
+- Refactored screen
+- Extracted custom hook
+- Extracted presentational component
+- A short paragraph explaining what changed and why
+
+---
+
+## Grading Criteria
+
+| Category                              | Points |
+|--------------------------------------|--------|
+| Hook extracted correctly             | 30     |
+| Presentational component extracted   | 30     |
+| Clear separation of concerns         | 20     |
+| Reduced duplication                  | 10     |
+| Code readability improved            | 10     |
+
+---
+
+## Why This Matters
+
+This session moves you from:
+
+> “Making it work”
+
+to
+
+> “Building it professionally.”
+
+Architecture determines how easily your app grows, changes, and scales.
+
+You are no longer writing demos — you are building real software.
