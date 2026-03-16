@@ -41,18 +41,18 @@ For this phase, every task must have exactly the following fields:
 ## Required Features
 
 1. View Tasks
-   - Display a list of tasks showing:
-     - title
-     - status
-   - Display the total number of tasks
+	- Display a list of tasks showing:
+		- title
+		- status
+	- Display the total number of tasks
 
 2. Create a Task
-   - Provide a form with inputs for:
-     - title
-     - status
-   - Validation rules:
-     - title must be 3–60 characters
-     - whitespace-only titles are invalid
+	- Provide a form with inputs for:
+		- title
+		- status
+	- Validation rules:
+		- title must be 3–60 characters
+		- whitespace-only titles are invalid
 
 3. Edit a Task
    - Clicking “Edit” should load the task into the form
@@ -157,11 +157,11 @@ You must submit:
 1. A working React application that meets all required feature requirements  
 2. At least two completed challenge features  
 3. A short written reflection (1–2 paragraphs, written in the readme) answering:  
-   - What state exists in your app?  
-   - Where does that state live?  
-   - Where does the design feel strained or unclear?  
-   - Which challenge features did you choose?  
-   - What became harder once the app grew?
+	- What state exists in your app?  
+	- Where does that state live?  
+	- Where does the design feel strained or unclear?  
+	- Which challenge features did you choose?  
+	- What became harder once the app grew?
 
 ## Important Notes
 
