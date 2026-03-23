@@ -51,38 +51,44 @@ By the end of the course, you will be able to:
 
 ## Schedule
 
-**Course Dates:** _(update to match semester)_
+**Course Dates:** March 23 to May 13, 2026
 
 **Class Times:** Monday, Wednesday 1:00 PM – 3:45 PM Virtual online.
 
 | Class | Date | Topics | Assignment |
 |:------|:-----|:-------|:-----------|
 |  -    | **Week 1** | - | - |
-| 1 | Mon, Mar 23| What is State? | |
-| 2 | Wed, Mar 25 | Local Component State | [Assignment 1 – Local State Task App] |
+| 1 | Mon, Mar 23| What is State? | [Assignment 1 – Local State Task App] |
+| 2 | Wed, Mar 25 | Local Component State |  |
 |  -    | **Week 2** | - | - |
 | 3 | Mon, Mar 30 | Derived State | |
-| 4 | Wed, Apr  1 | State and Component Architecture | |
+| 4 | Wed, Apr  1 | State and Component Architecture | [Assignment 2 – Refactor State Architecture] |
 |  -    | **Week 3** | - | - |
-| 5 | Mon, Apr  6 | Lifting State | |
-| 6 | Wed, Apr  8 | Prop Drilling and Data Flow | [Assignment 2 – Refactor State Architecture] |
+| 5 | Mon, Apr  6 | Lifting State |  |
+| 6 | Wed, Apr  8 | Prop Drilling and Data Flow |  |
 |  -    | **Week 4** | - | - |
-| 7 | Mon, Apr 13 | Reducer Pattern | |
+| 7 | Mon, Apr 13 | Reducer Pattern | [Assignment 3 – Shared State App] |
 | 8 | Wed, Apr 15 | useReducer | |
 |  -    | **Week 5** | - | - |
-| 9 | Mon, Apr 20 | Global State Concepts | |
-|10 | Wed, Apr 22 | Context API | [Assignment 3 – Shared State App] |
+| 9 | Mon, Apr 20 | Global State Concepts |  |
+|10 | Wed, Apr 22 | Context API | [Assignment 4] |
 |  -    | **Week 6** | - | - |
 |11 | Mon, Apr 27 | Redux and State Stores | |
 |12 | Wed, Apr 29 | Redux Toolkit | |
 |  -    | **Week 7** | - | - |
-|13 | Mon, May  4 | State Architecture Patterns | |
+|13 | Mon, May  4 | State Architecture Patterns | [Assignment 5] |
 |14 | Wed, May  6 | Debugging and Refactoring State | |
 |  -    | **Week 8** | - | - |
 |15 | Mon, May 11 | Final Project Work | |
 |16 | Mon, May 13 | Final Presentations | Final Project |
 
 ---
+
+[Assignment 1 – Local State Task App]: ./assignment-1.md
+[Assignment 2 – Refactor State Architecture]: ./assignment-2.md
+[Assignment 3 – Shared State App]: ./assignment-3.md
+[Assignment 4]: ./assignment-4.md
+[Assignment 5]: ./assignment-5.md
 
 ## Homework
 
